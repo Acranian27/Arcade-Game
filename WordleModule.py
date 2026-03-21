@@ -11,3 +11,16 @@ This is meant to host the Wordle game logic and processing necessary to run the 
 - Return to the main module
 
 """
+
+# Gathers the list of possible words from WordleData.txt
+with open("WordleData.txt", "r") as file:
+
+    FullSet = file.read() # file.read() returns every single character in the file
+    UncleanList = FullSet.split("|") # Every word is separated by | with spaces on both sides
+
+    # Cleans the unnecessary characters from the list
+    CleanList = []
+    for word in UncleanList:
+
+        word = word.strip() # Remove unnecessary spaces
+        CleanList.append(word)
