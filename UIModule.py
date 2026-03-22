@@ -9,6 +9,7 @@ This is meant to host the UI for the program.
 - Output the information for 'Help Menu' and 'Show Scores'
 
 """
+import time
 
 # Colours:
 ResetColour = "\033[0m"
@@ -31,6 +32,7 @@ def MainMenuButtons():
         "\n« Quit Program [Q] »\n"
         "- - - - - - - - - - - - -"
     )
+    time.sleep(1)
 
     print("\nSelect any of the options above by inputting the keybind in the square brackets."
           "\ne.g. for « Wordle [W] », input 'W'\n")
@@ -56,3 +58,4 @@ def WordleUI(Guess, States, Attempt):
 
     PreviousGuesses[Attempt - 1] = f'{"".join(CurrentWord)}\n'
     print("".join(PreviousGuesses))
+    time.sleep(0.5)
