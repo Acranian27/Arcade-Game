@@ -23,20 +23,20 @@ def Main():
 
         # Those with "pass" will have modules called  once the modules are created
         if Choice == "W":
-            print("You've chosen Wordle, lets begin!")
+            print("You've chosen Wordle, lets begin!\n")
             WordleMain()
             time.sleep(1.5)
 
         elif Choice == "C":
-            print("You've chosen Connections, lets begin!")
+            print("You've chosen Connections, lets begin!\n")
             pass
 
         elif Choice == "H":
-            print("You've chosen to ask for help.")
+            print("You've chosen to ask for help.\n")
             pass
 
         elif Choice == "S":
-            print("You've chosen to view your scores.")
+            print("You've chosen to view your scores.\n")
             pass
 
         elif Choice == "Q":

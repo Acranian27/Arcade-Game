@@ -10,7 +10,7 @@ This is meant to host the Wordle game logic and processing necessary to run the 
 - Get a score based on this
 
 """
-import random
+import random, time
 from InputValidatorModule import UserInput
 from UIModule import WordleUI
 
@@ -68,9 +68,11 @@ def WordleMain():
     RandomWord = SelectRandomWord()
     Attempts = 0
     Correct = False
+    print("To begin, enter a 5 letter word to guess the random word.")
 
     while Attempts < 6 and not Correct:
 
+        time.sleep(1)
         Guess = UserInput("Wordle")
         States = DetermineStates(RandomWord, Guess)
 
@@ -81,6 +83,6 @@ def WordleMain():
             Correct = True
 
     if Correct:
-        print("Congratulations! You guessed the word correctly!")
+        print("Congratulations! You guessed the word correctly!\n")
     else:
-        print("Tough luck, the word was", RandomWord)
+        print(f"Tough luck, the word was {RandomWord}\n")
