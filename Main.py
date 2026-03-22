@@ -10,9 +10,11 @@ Host the main logic of the program.
 - Run forever unless the user inputs as such
 
 """
+import time
 
 from InputValidatorModule import UserInput # Call a function to retrieve a valid user input
 from UIModule import MainMenuButtons # Call a function to output the main menu options
+from WordleModule import WordleMain
 
 def Main():
     while True:
@@ -22,7 +24,8 @@ def Main():
         # Those with "pass" will have modules called  once the modules are created
         if Choice == "W":
             print("You've chosen Wordle, lets begin!")
-            pass
+            WordleMain()
+            time.sleep(1.5)
 
         elif Choice == "C":
             print("You've chosen Connections, lets begin!")
