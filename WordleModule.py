@@ -73,7 +73,7 @@ def WordleMain():
     while Attempts < 6 and not Correct:
 
         time.sleep(1)
-        Guess = UserInput("Wordle")
+        Guess = UserInput("Wordle", CleanList)
         States = DetermineStates(RandomWord, Guess)
 
         Attempts += 1

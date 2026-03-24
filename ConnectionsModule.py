@@ -11,6 +11,8 @@ This is meant to host the Connections game logic and processing necessary to run
 - Return to the main module
 
 """
+import random
+from InputValidatorModule import UserInput
 
 # Gathers the list of possible words and groups from ConnectionsData.txt
 with open("ConnectionsData.txt", "r") as file:
@@ -29,3 +31,43 @@ with open("ConnectionsData.txt", "r") as file:
         name, words = line.split(":")
         Groups.append(name)
         GroupWords.append(words.replace("\n","")) # Each line has \n at the end so it must be removed
+
+# Chooses 4 random groups from the list, based on the index
+def SelectConnections():
+    Indexes = []
+    # Select an index until 4 indexes are in the list
+    while not len(Indexes) == 4:
+        index = random.randint(0, len(Groups) - 1)
+        # Prevent the same group from being chosen twice
+        if not index in Indexes:
+            Indexes.append(index)
+
+    return Indexes
+
+def GetWords(Indexes):
+    Words = []
+
+    for index in Indexes:
+        GroupOfWords = GroupWords[index].split(",")
+        for word in GroupOfWords:
+            Words.append(word)
+
+    return Words
+
+def ConnectionsMain():
+
+    Indexes = SelectConnections()
+    Attempts = 0
+    Correct = False
+    SelectedWords = GetWords(Indexes)
+
+    print(SelectedWords)
+    print("To begin, enter 4 words/phrases separated by commas.")
+
+    while Attempts < 4 and not Correct:
+
+        Guess = UserInput("Connections", SelectedWords)
+        print(Guess)
+
+
+

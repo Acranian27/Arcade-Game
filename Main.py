@@ -15,11 +15,12 @@ import time
 from InputValidatorModule import UserInput # Call a function to retrieve a valid user input
 from UIModule import MainMenuButtons # Call a function to output the main menu options
 from WordleModule import WordleMain
+from ConnectionsModule import ConnectionsMain
 
 def Main():
     while True:
         MainMenuButtons()
-        Choice = UserInput("MainMenu")
+        Choice = UserInput("MainMenu", "WCHSQ")
 
         # Those with "pass" will have modules called  once the modules are created
         if Choice == "W":
@@ -29,6 +30,7 @@ def Main():
 
         elif Choice == "C":
             print("You've chosen Connections, lets begin!\n")
+            ConnectionsMain()
             pass
 
         elif Choice == "H":
