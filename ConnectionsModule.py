@@ -54,6 +54,16 @@ def GetWords(Indexes):
 
     return Words
 
+def GetGroupNames(Indexes):
+    Names = []
+
+    for index in Indexes:
+        GroupOfWords = Groups[index].split(",")
+        for name in GroupOfWords:
+            Names.append(name)
+
+    return Names
+
 def ConnectionsMain():
 
     Indexes = SelectConnections()
@@ -69,5 +79,19 @@ def ConnectionsMain():
         Guess = UserInput("Connections", SelectedWords)
         print(Guess)
 
+        for index in Indexes:
+            Correct = 0
+
+            for word in Guess:
+                if word in GroupWords[index]:
+                    print(GroupWords[index], word)
+                    Correct += 1
+                    print("That word was in the group.")
+
+            if Correct == 4:
+                Correct = True
+                break
+            else:
+                print("Not all your words were in the same group.")
 
 

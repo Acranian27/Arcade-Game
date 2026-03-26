@@ -31,7 +31,6 @@ def Main():
         elif Choice == "C":
             print("You've chosen Connections, lets begin!\n")
             ConnectionsMain()
-            pass
 
         elif Choice == "H":
             print("You've chosen to ask for help.\n")

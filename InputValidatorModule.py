@@ -37,9 +37,6 @@ def UserInput(Destination, ApprovedInputs):
                 ValidFormat = False
 
         elif Destination == "Connections":
-            if not len(Words) == 4:
-                print("Your input must contain exactly 4 words/phrases, separated by commas.")
-                ValidFormat = False
 
             UnstrippedList = Input.split(",")
             Words = []
@@ -47,6 +44,10 @@ def UserInput(Destination, ApprovedInputs):
             for word in UnstrippedList:
                 word.strip()
                 Words.append(word)
+
+            if not len(Words) == 4:
+                print("Your input must contain exactly 4 words/phrases, separated by commas.")
+                ValidFormat = False
 
             for word in Words:
                 if not word in ApprovedInputs:
