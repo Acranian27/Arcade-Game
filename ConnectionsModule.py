@@ -65,33 +65,51 @@ def GetGroupNames(Indexes):
     return Names
 
 def ConnectionsMain():
-
     Indexes = SelectConnections()
+    CompletedIndexes = []
     Attempts = 0
-    Correct = False
-    SelectedWords = GetWords(Indexes)
 
-    print(SelectedWords)
+    SelectedWords = GetWords(Indexes)
     print("To begin, enter 4 words/phrases separated by commas.")
 
-    while Attempts < 4 and not Correct:
+    while Attempts < 4:
+        UnguessedIndexes = []
+        # Calculate the groups left to guess
+        for i in Indexes:
+            if not i in CompletedIndexes:
+                UnguessedIndexes.append(i)
+        # If no group are left, end the game
+        if len(UnguessedIndexes) == 0:
+            break
+
+        print(GetWords(UnguessedIndexes))
 
         Guess = UserInput("Connections", SelectedWords)
         print(Guess)
 
+        # For each group, check if the 4 words inputted are the 4 words of the group
         for index in Indexes:
             Correct = 0
 
             for word in Guess:
                 if word in GroupWords[index]:
-                    print(GroupWords[index], word)
                     Correct += 1
                     print("That word was in the group.")
 
+            # If all 4 words are in the group it breaks
+            print(Correct)
             if Correct == 4:
-                Correct = True
+                CompletedIndexes.append(index)
+                print(CompletedIndexes)
                 break
+
             else:
                 print("Not all your words were in the same group.")
+        if not Correct == 4:
+            Attempts += 1
 
-
+    if Attempts == 4:
+        print("Unlucky, maybe next time..")
+        print("Show the groups here.")
+    else:
+        print(f"Congratulations, you guessed all 4 groups correctly in {Attempts} attempts!")
