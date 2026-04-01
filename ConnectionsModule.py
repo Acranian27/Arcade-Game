@@ -3,10 +3,10 @@
 This is meant to host the Connections game logic and processing necessary to run the game.
 
 # To Do:
-- Select random groups and the words within that the user needs to guess
-- Retrieve a user input
-- Compare the user input to the random words
-- Run this module until the user guesses all 4 groups or after 4 incorrect attempts
+- Select random groups and the words within that the user needs to guess -> Complete
+- Retrieve a user input -> Partially Complete
+- Compare the user input to the random words -> Complete
+- Run this module until the user guesses all 4 groups or after 4 incorrect attempts -> Complete
 - Get a score based on this
 - Return to the main module
 
@@ -44,28 +44,11 @@ def SelectConnections():
 
     return Indexes
 
-# Returns an index if all 4 words are in the same group else None
-def CorrectGuess(Indexes, Guess):
-    # For each group, check if the 4 words inputted are the 4 words of the group
-    for index in Indexes:
-        Correct = 0
-
-        for word in Guess:
-            if word in GroupWords[index]:
-                Correct += 1
-                print("That word was in the group.")
-
-        # If all 4 words are in the group it breaks
-        if Correct == 4:
-            print("You guessed a group correctly.")
-            return index
-    return -1
-
 def GetWords(Indexes):
     Words = []
 
     for index in Indexes:
-        GroupOfWords = GroupWords[index].split(",")
+        GroupOfWords = GroupWords[int(index)].split(",")
         for word in GroupOfWords:
             Words.append(word)
 
@@ -94,54 +77,69 @@ def RemainingGroups(Indexes, CompletedIndexes):
     else:
         return UnguessedIndexes
 
+def CorrectGuess(Indexes, Guess, Validity): #BRIEF - Determines if the user guessed a group completely
+    # SECT –––––– GUESS VERIFICATION ––––––
+    for index in Indexes:
+        Correct = 0 #BRIEF - Reset correct every group because all words must be in the same group
+        for word in Guess:
+            if word in GroupWords[index]:
+                Correct += 1
+                print("That word was in the group.")
+
+        #SECT –––––– CHOOSE RETURN VALUES ––––––
+        if Correct == 4: #BRIEF - All 4 words were in the same group
+            print("You guessed a group correctly.")
+            if Validity: #BRIEF - Is the index wanted or the fact that it was a correct guess?
+                return True
+            else:
+                return index
+
+    if Validity: #BRIEF - No index to return because no group was guessed correctly
+        return False
+    else:
+        return None #BRIEF - Not possible unless code is meddled with
+
+
 def ConnectionsMain():
-    """–––––––––––KEY VARIABLES–––––––––––"""
+    #SECT –––––– CONSTANT VALUES ––––––
     Indexes = SelectConnections()
     Lives = 4
-    Attempts = 0
 
-    SelectedWords = GetWords(Indexes)
+    #SECT –––––– OTHER KEY VALUES ––––––
+    Attempts = 0
+    UnguessedIndexes = Indexes #BRIEF - Placeholder for first round
+    CompletedIndexes = []
+
     print("To begin, enter 4 words/phrases separated by commas.")
 
-    """–––––––––––MAIN LOOP–––––––––––"""
-    while True: # 7 rounds max
-        # Determines the completed indexes
-        if Attempts != 0:
-            CompletedIndexes.append(CorrectGuess(Indexes, Guess))
-            # If the user guessed incorrectly, the function outputs -1
-            try:
-                CompletedIndexes.remove(-1)
-            except: # If -1 doesn't exist, .remove() results in a ValueError
-                pass
-        else:
-            CompletedIndexes = []
+    while True:
+        #SECT –––––– REMAINING WORDS ––––––
+        OrderedList = GetWords(UnguessedIndexes) #BRIEF - Remaining words
+        print("Ordered:",OrderedList)
 
-        """–––––––––––END-GAME CONDITIONS–––––––––––"""
-        print(f"LivesLost = {Attempts} - {len(CompletedIndexes)}.")
-        LivesLost = Attempts - len(CompletedIndexes) # Every attempt that didn't add an index to CompletedIndexes was wrong
+        PresentedList = OrderedList
+        random.shuffle(PresentedList) #BRIEF - Remaining words in a shuffled order
+        print("Shuffled:",PresentedList)
 
-        UnguessedIndexes = RemainingGroups(Indexes,CompletedIndexes)
+        #SECT –––––– ATTEMPT TRACKING ––––––
+        Attempts += 1
+        print("Attempt:", Attempts)
+
+        #SECT –––––– GUESS CALCULATIONS ––––––
+        Guess = UserInput("Connections", OrderedList)
+        print(Guess)
+
+        Success = CorrectGuess(Indexes, Guess, True)
+        if Success: #BRIEF - Only append if there was a correct guess
+            CompletedIndexes.append(CorrectGuess(Indexes, Guess, False))
+
+        #SECT –––––– END-GAME VALUES CALCULATIONS ––––––
+        LivesLost = Attempts - len(CompletedIndexes)
+        UnguessedIndexes = RemainingGroups(Indexes,CompletedIndexes) #BRIEF - Set to the indexes not in CompletedIndexes
 
         print("Lives lost:", LivesLost)
         print("Unguessed indexes:", UnguessedIndexes)
 
-        # Determine if the game should be run or not
-        if UnguessedIndexes == 0 or LivesLost == Lives:
+        #SECT –––––– END-GAME CONDITIONS ––––––
+        if UnguessedIndexes == 0 or LivesLost == Lives: #BRIEF - No groups left to guess or all lives have been used.
             break
-
-        """–––––––––––IMPORTANT PRINTS–––––––––––"""
-        # Retrieve the remaining words
-        OrderedList = GetWords(UnguessedIndexes)
-        print(OrderedList)
-
-        # Print the remaining words in a shuffled order
-        PresentedList = OrderedList
-        random.shuffle(PresentedList)
-        print(PresentedList)
-
-        """–––––––––––REUSED VARIABLES–––––––––––"""
-        Attempts += 1
-        print("Attempt:", Attempts)
-
-        Guess = UserInput("Connections", SelectedWords)
-        print(Guess)
