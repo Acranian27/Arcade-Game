@@ -44,6 +44,23 @@ def SelectConnections():
 
     return Indexes
 
+# Returns an index if all 4 words are in the same group else None
+def CorrectGuess(Indexes, Guess):
+    # For each group, check if the 4 words inputted are the 4 words of the group
+    for index in Indexes:
+        Correct = 0
+
+        for word in Guess:
+            if word in GroupWords[index]:
+                Correct += 1
+                print("That word was in the group.")
+
+        # If all 4 words are in the group it breaks
+        if Correct == 4:
+            print("You guessed a group correctly.")
+            return index
+    return -1
+
 def GetWords(Indexes):
     Words = []
 
@@ -64,52 +81,67 @@ def GetGroupNames(Indexes):
 
     return Names
 
+# Returns the groups that still need to be guessed
+def RemainingGroups(Indexes, CompletedIndexes):
+    UnguessedIndexes = []
+    # Calculate the groups left to guess
+    for i in Indexes:
+        if not i in CompletedIndexes:
+            UnguessedIndexes.append(i)
+
+    if len(UnguessedIndexes) == 0:
+        return 0
+    else:
+        return UnguessedIndexes
+
 def ConnectionsMain():
+    """–––––––––––KEY VARIABLES–––––––––––"""
     Indexes = SelectConnections()
-    CompletedIndexes = []
+    Lives = 4
     Attempts = 0
 
     SelectedWords = GetWords(Indexes)
     print("To begin, enter 4 words/phrases separated by commas.")
 
-    while Attempts < 4:
-        UnguessedIndexes = []
-        # Calculate the groups left to guess
-        for i in Indexes:
-            if not i in CompletedIndexes:
-                UnguessedIndexes.append(i)
-        # If no group are left, end the game
-        if len(UnguessedIndexes) == 0:
+    """–––––––––––MAIN LOOP–––––––––––"""
+    while True: # 7 rounds max
+        # Determines the completed indexes
+        if Attempts != 0:
+            CompletedIndexes.append(CorrectGuess(Indexes, Guess))
+            # If the user guessed incorrectly, the function outputs -1
+            try:
+                CompletedIndexes.remove(-1)
+            except: # If -1 doesn't exist, .remove() results in a ValueError
+                pass
+        else:
+            CompletedIndexes = []
+
+        """–––––––––––END-GAME CONDITIONS–––––––––––"""
+        print(f"LivesLost = {Attempts} - {len(CompletedIndexes)}.")
+        LivesLost = Attempts - len(CompletedIndexes) # Every attempt that didn't add an index to CompletedIndexes was wrong
+
+        UnguessedIndexes = RemainingGroups(Indexes,CompletedIndexes)
+
+        print("Lives lost:", LivesLost)
+        print("Unguessed indexes:", UnguessedIndexes)
+
+        # Determine if the game should be run or not
+        if UnguessedIndexes == 0 or LivesLost == Lives:
             break
 
-        print(GetWords(UnguessedIndexes))
+        """–––––––––––IMPORTANT PRINTS–––––––––––"""
+        # Retrieve the remaining words
+        OrderedList = GetWords(UnguessedIndexes)
+        print(OrderedList)
+
+        # Print the remaining words in a shuffled order
+        PresentedList = OrderedList
+        random.shuffle(PresentedList)
+        print(PresentedList)
+
+        """–––––––––––REUSED VARIABLES–––––––––––"""
+        Attempts += 1
+        print("Attempt:", Attempts)
 
         Guess = UserInput("Connections", SelectedWords)
         print(Guess)
-
-        # For each group, check if the 4 words inputted are the 4 words of the group
-        for index in Indexes:
-            Correct = 0
-
-            for word in Guess:
-                if word in GroupWords[index]:
-                    Correct += 1
-                    print("That word was in the group.")
-
-            # If all 4 words are in the group it breaks
-            print(Correct)
-            if Correct == 4:
-                CompletedIndexes.append(index)
-                print(CompletedIndexes)
-                break
-
-            else:
-                print("Not all your words were in the same group.")
-        if not Correct == 4:
-            Attempts += 1
-
-    if Attempts == 4:
-        print("Unlucky, maybe next time..")
-        print("Show the groups here.")
-    else:
-        print(f"Congratulations, you guessed all 4 groups correctly in {Attempts} attempts!")
