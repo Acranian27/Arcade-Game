@@ -4,142 +4,122 @@ This is meant to host the Connections game logic and processing necessary to run
 
 # To Do:
 - Select random groups and the words within that the user needs to guess -> Complete
-- Retrieve a user input -> Partially Complete
+- Retrieve a user input -> Complete
 - Compare the user input to the random words -> Complete
 - Run this module until the user guesses all 4 groups or after 4 incorrect attempts -> Complete
 - Get a score based on this
 - Return to the main module
 
 """
-import random
+import random, time
 from InputValidatorModule import UserInput
 
-# Gathers the list of possible words and groups from ConnectionsData.txt
-with open("ConnectionsData.txt", "r") as file:
+with open("ConnectionsData.txt", "r") as file: #BRIEF - Accesses file of connections groups and words
+    #SECT –––––– DEFINITIONS ––––––
+    GroupsList = [] #BRIEF - Stores every group
+    Iterable = -1 #BRIEF - Used to give an index to each group
 
-    Groups = []
-    GroupWords = []
-
+    #SECT –––––– STORE FILE DATA ––––––
     while True:
-        line = file.readline() # file.readline() reads every single character in that line of the file
+        Iterable += 1
+        line = file.readline()
 
-        # An empty string means the file is completely read through
-        if line == "":
+        if line == "": #BRIEF - Empty line means file is fully read
             break
+        #SUBSECT –––––– STORE GROUPS ––––––
+        Name, Words = line.split(":") #BRIEF - Each line is structured -> GROUPNAME:WORD1,WORD2,WORD3,WORD4
 
-        # Each line is structured -> GROUPNAME:WORD1,WORD2,WORD3,WORD4
-        name, words = line.split(":")
-        Groups.append(name)
-        GroupWords.append(words.replace("\n","")) # Each line has \n at the end so it must be removed
+        ThisGroup = { #BRIEF - Store information about the group
+            "Name": Name,
+            "WordsWithin": Words.replace("\n","").split(","), #BRIEF - \n at the end of each line
+            "ID": Iterable,
+            "Guessed": False
+        }
 
-# Chooses 4 random groups from the list, based on the index
-def SelectConnections():
-    Indexes = []
-    # Select an index until 4 indexes are in the list
-    while not len(Indexes) == 4:
-        index = random.randint(0, len(Groups) - 1)
-        # Prevent the same group from being chosen twice
-        if not index in Indexes:
-            Indexes.append(index)
+        GroupsList.append(ThisGroup)
 
-    return Indexes
+def ChoseGroups(): #BRIEF - Chose 4 groups when the round begins
+    #SECT –––––– KEY VALUES ––––––
+    ChosenGroups = []
+    ChosenIndexes = []
 
-def GetWords(Indexes):
-    Words = []
+    #SECT –––––– SELECT GROUPS ––––––
+    while len(ChosenGroups) != 4:
+        ID = random.randint(0, len(GroupsList))
 
-    for index in Indexes:
-        GroupOfWords = GroupWords[int(index)].split(",")
-        for word in GroupOfWords:
-            Words.append(word)
+        if ID not in ChosenIndexes: #BRIEF - Prevents groups being picked more than once
+            ChosenIndexes.append(ID)
+            ChosenGroups.append(GroupsList[ID])
 
-    return Words
+    return ChosenGroups
 
-def GetGroupNames(Indexes):
-    Names = []
-
-    for index in Indexes:
-        GroupOfWords = Groups[index].split(",")
-        for name in GroupOfWords:
-            Names.append(name)
-
-    return Names
-
-# Returns the groups that still need to be guessed
-def RemainingGroups(Indexes, CompletedIndexes):
-    UnguessedIndexes = []
-    # Calculate the groups left to guess
-    for i in Indexes:
-        if not i in CompletedIndexes:
-            UnguessedIndexes.append(i)
-
-    if len(UnguessedIndexes) == 0:
-        return 0
-    else:
-        return UnguessedIndexes
-
-def CorrectGuess(Indexes, Guess, Validity): #BRIEF - Determines if the user guessed a group completely
-    # SECT –––––– GUESS VERIFICATION ––––––
-    for index in Indexes:
+def CheckGuess(groups, guess): #BRIEF - Determines the correctly guessed group
+    #SECT –––––– GUESS VERIFICATION ––––––
+    for group in groups:
         Correct = 0 #BRIEF - Reset correct every group because all words must be in the same group
-        for word in Guess:
-            if word in GroupWords[index]:
+        for word in guess:
+            if word in group["WordsWithin"]:
                 Correct += 1
-                print("That word was in the group.")
+                print("That word was in the group.") #DEBUG ?
 
-        #SECT –––––– CHOOSE RETURN VALUES ––––––
+        #SECT –––––– CHANGE GUESSED ATTRIBUTE ––––––
         if Correct == 4: #BRIEF - All 4 words were in the same group
-            print("You guessed a group correctly.")
-            if Validity: #BRIEF - Is the index wanted or the fact that it was a correct guess?
-                return True
-            else:
-                return index
+            print("You guessed a group correctly.") #DEBUG ?
+            group["Guessed"] = True
 
-    if Validity: #BRIEF - No index to return because no group was guessed correctly
-        return False
-    else:
-        return None #BRIEF - Not possible unless code is meddled with
+def RemainingWords(groups): #BRIEF - Gets the words in each group and stores them in a list
+    #SECT –––––– KEY VALUES ––––––
+    LeftOver = []
 
+    #SECT –––––– APPEND UNGUESSED WORDS ––––––
+    for group in groups:
+        if not group["Guessed"]: #BRIEF - Remaining groups must not have been guessed yet
+            for word in group["WordsWithin"]:
+                LeftOver.append(word)
+
+    print(LeftOver) #DEBUG
+    return LeftOver
 
 def ConnectionsMain():
     #SECT –––––– CONSTANT VALUES ––––––
-    Indexes = SelectConnections()
-    Lives = 4
+    GROUPS = ChoseGroups() #BRIEF - Contains the 4 groups to be guessed
+    MAX_LIVES = 4 #BRIEF - The max amount of attempts that don't correctly guess a group
 
     #SECT –––––– OTHER KEY VALUES ––––––
     Attempts = 0
-    UnguessedIndexes = Indexes #BRIEF - Placeholder for first round
-    CompletedIndexes = []
 
     print("To begin, enter 4 words/phrases separated by commas.")
 
+    #SECT –––––– GAME LOOP ––––––
     while True:
-        #SECT –––––– REMAINING WORDS ––––––
-        OrderedList = GetWords(UnguessedIndexes) #BRIEF - Remaining words
-        print("Ordered:",OrderedList)
+
+        #SUBSECT –––––– REMAINING WORDS ––––––
+        OrderedList = RemainingWords(GROUPS) #BRIEF - Remaining words
+        print("Ordered:",OrderedList) #DEBUG
 
         PresentedList = OrderedList
         random.shuffle(PresentedList) #BRIEF - Remaining words in a shuffled order
-        print("Shuffled:",PresentedList)
+        print("Shuffled:",PresentedList) #DEBUG
 
-        #SECT –––––– ATTEMPT TRACKING ––––––
+        #SUBSECT –––––– ATTEMPT TRACKING ––––––
         Attempts += 1
         print("Attempt:", Attempts)
 
-        #SECT –––––– GUESS CALCULATIONS ––––––
+        #SUBSECT –––––– GUESS-BASED CALCULATIONS ––––––
         Guess = UserInput("Connections", OrderedList)
-        print(Guess)
+        print(Guess) #DEBUG
 
-        Success = CorrectGuess(Indexes, Guess, True)
-        if Success: #BRIEF - Only append if there was a correct guess
-            CompletedIndexes.append(CorrectGuess(Indexes, Guess, False))
+        CheckGuess(GROUPS, Guess) #BRIEF - Change the "Guessed" value of a group to True if correctly guessed
 
-        #SECT –––––– END-GAME VALUES CALCULATIONS ––––––
-        LivesLost = Attempts - len(CompletedIndexes)
-        UnguessedIndexes = RemainingGroups(Indexes,CompletedIndexes) #BRIEF - Set to the indexes not in CompletedIndexes
+        Correct = 0
+        for group in GROUPS: #BRIEF - Calculates the number of correctly guess groups
+            print("Guessed:", group["Guessed"]) #DEBUG
+            if group["Guessed"]:
+                Correct += 1
 
-        print("Lives lost:", LivesLost)
-        print("Unguessed indexes:", UnguessedIndexes)
+        CorrectGuesses = Correct
+        LivesLost = Attempts - CorrectGuesses
 
-        #SECT –––––– END-GAME CONDITIONS ––––––
-        if UnguessedIndexes == 0 or LivesLost == Lives: #BRIEF - No groups left to guess or all lives have been used.
+        #SUBSECT –––––– END-GAME CONDITIONS ––––––
+        if CorrectGuesses == 4 or LivesLost == MAX_LIVES: #BRIEF - No groups left to guess or all lives have been used.
             break
