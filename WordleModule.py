@@ -14,75 +14,98 @@ import random, time
 from InputValidatorModule import UserInput
 from UIModule import WordleUI
 
-# Gathers the list of possible words from WordleData.txt
+#SECT –––––– GATHER POSSIBLE WORDLES ––––––
 with open("WordleData.txt", "r") as file:
 
-    FullSet = file.read() # file.read() returns every single character in the file
-    UncleanList = FullSet.split("|") # Every word is separated by | with spaces on both sides
+    UncleanList = file.read().split("|") # Every word is separated by | with spaces on both sides
 
-    # Cleans the unnecessary characters from the list
-    CleanList = []
+    PossibleWordles = []
     for word in UncleanList:
+        PossibleWordles.append(word.strip())
 
-        word = word.strip() # Remove unnecessary spaces
-        CleanList.append(word)
+#SECT –––––– GATHER VALID INPUTS ––––––
+with open("WordleVerificationData.txt", "r") as file:
 
-# Chooses a random word from the list
-def SelectRandomWord():
+    VerificationListRaw = file.read().split(",")
 
-    index = random.randint(0, len(CleanList) - 1) # Python starts at zero not one
+    ValidationList = []
+    for word in VerificationListRaw:
+        ValidationList.append(word.strip())
 
-    return CleanList[index]
+
+def SelectRandomWord(): #BRIEF - Retrieves a random word
+
+    index = random.randint(0, len(PossibleWordles) - 1) # Python starts at zero not one
+
+    return PossibleWordles[index]
 
 # Adds a state for each letter in Guess inside a list
-def DetermineStates(Answer, Guess):
+def DetermineStates(answer, guess):
+    """
+    LetterFrequency is very much essential because it ensures that duplicate
+       letters are accurately accounted for.
 
-    LetterFrequency = {}
-    LetterStates = []
+    eg. Lets use the example of the answer: "spike" and the guess: "paper".
+    eg. Both letter "p" in paper would receive a yellow state even though "p" only
+    eg.    appears in spike once.
+    eg. With LetterFrequency, only the first "p" is given a yellow state since the
+    eg.    LetterFrequency["p"] will be 0 when the second "p" is tested.
+    """
 
-    # Used to show the correct number of letters of the same type
-    for letter in Answer:
+    #SECT –––––– KEY VALUES ––––––
+    LetterFrequency = {} #BRIEF - Stores the frequencies of each letter in the answer (eg. "a":1, "p":2, "l":1, "e":1)
+    LetterStates = ["","","","","",""]
+
+    #SECT –––––– RECORD LETTER APPEARANCES (ANSWER) ––––––
+    for letter in answer:
         if letter in LetterFrequency:
             LetterFrequency[letter] += 1
         else:
-            LetterFrequency[letter] = 1 # It must be defined before 1 can be added
+            LetterFrequency[letter] = 1
+    print("LetterFrequency:",LetterFrequency) #DEBUG
 
-    # Calculates the states for each letter
-    for pos, letter in enumerate(Guess):
-        if letter == Answer[pos]:
-            LetterStates.append("green")
+    #SECT –––––– DETERMINE LETTER STATES (GUESS) ––––––
+    for i in range(5): #BRIEF - Check for greens separately otherwise errors arise
+        if guess[i] == answer[i]:
+            LetterStates[i] = ("green") #BRIEF - Same letter and the same position in the answer
+            LetterFrequency[guess[i]] -= 1
+
+    for pos, letter in enumerate(guess): #BRIEF - Check for yellows and greys
+        if letter in answer and LetterFrequency[letter] > 0 and LetterStates[pos] == "": #BRIEF - Make sure that it doesn't erase the "green" state
+            LetterStates[pos] = ("yellow") #BRIEF - Same letter but incorrect position in the answer
             LetterFrequency[letter] -= 1
 
-        elif letter in Answer and LetterFrequency[letter] > 0:
-            LetterStates.append("yellow")
-            LetterFrequency[letter] -= 1
-
-        else:
-            LetterStates.append("grey")
+        elif LetterStates[pos] == "":#BRIEF - Make sure that it doesn't erase the "green" state
+            LetterStates[pos] = ("grey") #BRIEF - Not in the word at all
 
     return LetterStates
 
-# Calls the core functions to run Wordle
 def WordleMain():
-
+    #SECT –––––– KEY VARIABLES ––––––
     RandomWord = SelectRandomWord()
     Attempts = 0
     Correct = False
+
+    print("RandomWord:", RandomWord)  # DEBUG
     print("To begin, enter a 5 letter word to guess the random word.")
 
-    while Attempts < 6 and not Correct:
-
+    #SECT –––––– GAME LOOP ––––––
+    while True:
+        #SUBSECT –––––– CHECK GUESS ––––––
         time.sleep(1)
-        Guess = UserInput("Wordle", CleanList)
+        Guess = UserInput("Wordle", ValidationList)
         States = DetermineStates(RandomWord, Guess)
 
+        #SUBSECT –––––– UI IMPORTING ––––––
         Attempts += 1
         WordleUI(Guess, States, Attempts)
 
-        if Guess == RandomWord:
-            Correct = True
+        #SUBSECT –––––– END-GAME CONDITIONS ––––––
+        if Guess == RandomWord or Attempts == 6:
+            break
 
-    if Correct:
+    #SECT –––––– FINAL OUTPUTS ––––––
+    if Guess == RandomWord:
         print("Congratulations! You guessed the word correctly!\n")
     else:
         print(f"Tough luck, the word was {RandomWord}\n")

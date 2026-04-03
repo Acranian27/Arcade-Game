@@ -11,51 +11,53 @@ This is meant to get a validate a user input so that it doesn't crash other modu
 """
 
 def UserInput(destination, approvedInputs):
-
-    # Run until the user inputs something in a valid format
+    #SECT –––––– LOOP UNTIL VALID INPUT ––––––
     while True:
-
+        #SUBSECT –––––– KEY VARIABLES ––––––
         ValidFormat = True
-        Input = input("Input: ").upper() # All comparisons done in uppercase
-        #print("UserInput:", Input)  # DEBUG
+        Input = input("Input: ").upper() #BRIEF - All comparisons done in uppercase
+        print("Approved Inputs:", approvedInputs) #DEBUG
+        print(Input)
 
+        #SUBSECT –––––– MAIN MENU VALIDATION ––––––
         if destination == "MainMenu":
-            if not len(Input) == 1:
+            if not len(Input) == 1: #BRIEF - Only 1 letter long
                 print("Your input be exactly one character long.")
                 ValidFormat = False
 
-            elif not Input in approvedInputs:
+            elif not Input in approvedInputs: #BRIEF - Verify it corresponds to a button
                 print("Your input must be one of the letters next to the buttons.")
                 ValidFormat = False
 
+        #SUBSECT –––––– WORDLE VALIDATION ––––––
         elif destination == "Wordle":
-            if not len(Input) == 5:
+            if not len(Input) == 5: #BRIEF - Only 5 letters long
                 print("Your input must be exactly five characters long.")
                 ValidFormat = False
 
-            elif not Input in approvedInputs:
+            elif not Input in approvedInputs: #BRIEF - Verify it is a real word and not "AAAAA" for eg
                 print("Your input must be an actual word.\nThis means no numbers or symbols.")
                 ValidFormat = False
 
+        #SUBSECT –––––– CONNECTIONS VALIDATION ––––––
         elif destination == "Connections":
             UnstrippedList = Input.split(",")
-            #print("UnstrippedList (Input):", UnstrippedList) #DEBUG
             Words = []
 
-            for word in UnstrippedList:
+            for word in UnstrippedList: #BRIEF - Ensures each word has no extra spaces
                 Words.append(word.strip())
 
-            if not len(Words) == 4:
+            if not len(Words) == 4: #BRIEF - Only 4 words long
                 print("Your input must contain exactly 4 words/phrases, separated by commas.")
                 ValidFormat = False
 
-            for word in Words:
+            for word in Words: #BRIEF - Verify it is a word within one of the 4 groups
                 if not word in approvedInputs:
                     print("Your input must contain words/phrases as presented to you.")
                     ValidFormat = False
-                    break # Ensures the print is only outputted once
+                    break #BRIEF - Ensures the print is only outputted once
 
             Input = Words
-            #print(Input)
-        if ValidFormat:
+
+        if ValidFormat: #BRIEF - If anything is not how the program wants it, nothing is returned and it loops again
             return Input

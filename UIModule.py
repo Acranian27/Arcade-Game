@@ -40,26 +40,28 @@ def MainMenuButtons():
     print("\nSelect any of the options above by inputting the keybind in the square brackets."
           "\ne.g. for « Wordle [W] », input 'W'\n")
 
-# Outputs the colouring of the letter based on it's correctness
-
 PreviousGuesses = [" -  -  -  -  - \n"] * 6
 
-def WordleUI(Guess, States, Attempt):
+# Outputs the colouring of the letter based on it's correctness
+def WordleUI(guess, states, attempt):
+    global PreviousGuesses
+    if attempt == 1:
+        PreviousGuesses = [" -  -  -  -  - \n"] * 6
 
     CurrentWord = []
 
     # Gives each letter a unique colour based on their state
-    for i, letter in enumerate(Guess):
-        if States[i] == "green":
+    for i, letter in enumerate(guess):
+        if states[i] == "green":
             CurrentWord.append(f"{GreenBackground} {letter} {ResetColour}")
 
-        elif States[i] == "yellow":
+        elif states[i] == "yellow":
             CurrentWord.append(f"{YellowBackground} {letter} {ResetColour}")
 
         else:
             CurrentWord.append(f"{GreyBackground} {letter} {ResetColour}")
 
-    PreviousGuesses[Attempt - 1] = f'{"".join(CurrentWord)}\n'
+    PreviousGuesses[attempt - 1] = f'{"".join(CurrentWord)}\n'
     print("".join(PreviousGuesses))
     time.sleep(0.5)
 
