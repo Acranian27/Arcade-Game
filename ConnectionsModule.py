@@ -13,6 +13,7 @@ This is meant to host the Connections game logic and processing necessary to run
 """
 import random, time
 from InputValidatorModule import UserInput
+from UIModule import ConnectionsUI
 
 with open("ConnectionsData.txt", "r") as file: #BRIEF - Accesses file of connections groups and words
     #SECT –––––– DEFINITIONS ––––––
@@ -27,11 +28,13 @@ with open("ConnectionsData.txt", "r") as file: #BRIEF - Accesses file of connect
         if line == "": #BRIEF - Empty line means file is fully read
             break
         #SUBSECT –––––– STORE GROUPS ––––––
-        Name, Words = line.split(":") #BRIEF - Each line is structured -> GROUPNAME:WORD1,WORD2,WORD3,WORD4
+        Difficulty, NameWords = line.split("-", 1) #BRIEF - Each line is structured -> DIFFICULTY-GROUPNAME;WORD1,WORD2,WORD3,WORD4
+        Name, Words = NameWords.split(";")
 
         ThisGroup = { #BRIEF - Store information about the group
             "Name": Name,
             "WordsWithin": Words.replace("\n","").split(","), #BRIEF - \n at the end of each line
+            "Difficulty": Difficulty,
             "ID": Iterable,
             "Guessed": False
         }
@@ -41,14 +44,15 @@ with open("ConnectionsData.txt", "r") as file: #BRIEF - Accesses file of connect
 def ChoseGroups(): #BRIEF - Chose 4 groups when the round begins
     #SECT –––––– KEY VALUES ––––––
     ChosenGroups = []
-    ChosenIndexes = []
+    ChosenDifficulties = []
 
     #SECT –––––– SELECT GROUPS ––––––
     while len(ChosenGroups) != 4:
         ID = random.randint(0, len(GroupsList))
+        Diff = GroupsList[ID]["Difficulty"]
 
-        if ID not in ChosenIndexes: #BRIEF - Prevents groups being picked more than once
-            ChosenIndexes.append(ID)
+        if Diff not in ChosenDifficulties: #BRIEF - Prevents the same difficulty appearing twice (also prevents the same group from being chosen twice)
+            ChosenDifficulties.append(Diff)
             ChosenGroups.append(GroupsList[ID])
 
     return ChosenGroups
@@ -60,11 +64,9 @@ def CheckGuess(groups, guess): #BRIEF - Determines the correctly guessed group
         for word in guess:
             if word in group["WordsWithin"]:
                 Correct += 1
-                print("That word was in the group.") #DEBUG ?
 
         #SECT –––––– CHANGE GUESSED ATTRIBUTE ––––––
         if Correct == 4: #BRIEF - All 4 words were in the same group
-            print("You guessed a group correctly.") #DEBUG ?
             group["Guessed"] = True
 
 def RemainingWords(groups): #BRIEF - Gets the words in each group and stores them in a list
@@ -77,7 +79,6 @@ def RemainingWords(groups): #BRIEF - Gets the words in each group and stores the
             for word in group["WordsWithin"]:
                 LeftOver.append(word)
 
-    print(LeftOver) #DEBUG
     return LeftOver
 
 def ConnectionsMain():
@@ -86,40 +87,59 @@ def ConnectionsMain():
     MAX_LIVES = 4 #BRIEF - The max amount of attempts that don't correctly guess a group
 
     #SECT –––––– OTHER KEY VALUES ––––––
-    Attempts = 0
+    Attempts = 1
+    LivesLost = 0
+
 
     print("To begin, enter 4 words/phrases separated by commas.")
+    time.sleep(1.5)
 
     #SECT –––––– GAME LOOP ––––––
     while True:
+        #SUBSECT –––––– UI IMPORTING ––––––
+        GameStats = {  # BRIEF - Used to import data to the UI module
+            "LivesRemaining": MAX_LIVES - LivesLost,
+            "Attempt": Attempts,
+            "Groups": GROUPS
+        }
 
-        #SUBSECT –––––– REMAINING WORDS ––––––
-        OrderedList = RemainingWords(GROUPS) #BRIEF - Remaining words
-        print("Ordered:",OrderedList) #DEBUG
+        ConnectionsUI(GameStats, "IN-GAME")
+        time.sleep(1)
 
-        PresentedList = OrderedList
-        random.shuffle(PresentedList) #BRIEF - Remaining words in a shuffled order
-        print("Shuffled:",PresentedList) #DEBUG
-
-        #SUBSECT –––––– ATTEMPT TRACKING ––––––
-        Attempts += 1
-        print("Attempt:", Attempts)
-
-        #SUBSECT –––––– GUESS-BASED CALCULATIONS ––––––
-        Guess = UserInput("Connections", OrderedList)
-        print(Guess) #DEBUG
+        #SUBSECT –––––– CHECK GUESS ––––––
+        Guess = UserInput("Connections", RemainingWords(GROUPS))
 
         CheckGuess(GROUPS, Guess) #BRIEF - Change the "Guessed" value of a group to True if correctly guessed
 
+        #SUBSECT –––––– UPDATE END-GAME VARIABLES ––––––
         Correct = 0
         for group in GROUPS: #BRIEF - Calculates the number of correctly guess groups
-            print("Guessed:", group["Guessed"]) #DEBUG
             if group["Guessed"]:
                 Correct += 1
 
         CorrectGuesses = Correct
+
+        Attempts += 1
         LivesLost = Attempts - CorrectGuesses
 
         #SUBSECT –––––– END-GAME CONDITIONS ––––––
         if CorrectGuesses == 4 or LivesLost == MAX_LIVES: #BRIEF - No groups left to guess or all lives have been used.
             break
+
+    #SECT –––––– SHOW FINAL STATS ––––––
+    if CorrectGuesses == 4:
+        print("\nCongratulations on guessing all 4 groups!")
+    else:
+        print("\nUnlucky, these were the 4 groups:")
+
+    for group in GROUPS: #BRIEF - Make sure that all groups will be visible
+        if not group["Guessed"]:
+            group["Guessed"] = True
+
+    GameStats = {  # BRIEF - Used to import data to the UI module
+        "LivesRemaining": MAX_LIVES - LivesLost,
+        "Attempt": Attempts,
+        "Groups": GROUPS
+    }
+
+    ConnectionsUI(GameStats, 'END')
