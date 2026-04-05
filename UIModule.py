@@ -5,7 +5,7 @@ This is meant to host the UI for the program.
 # To Do:
 - Output the buttons for the main menu -> COMPLETE
 - Output the UI for Wordle -> COMPLETE
-- Output the UI for Connections
+- Output the UI for Connections -> COMPLETE
 - Output the information for 'Help Menu' and 'Show Scores'
 
 """
@@ -21,7 +21,7 @@ GreyBackground = "\033[47m\033[1;38m"
 BoldWhite = "\033[1;38m"
 
 def MainMenuButtons():
-
+    #SECT –––––– PRINT BUTTONS ––––––
     print(
         "- - - - - - - - - - - - -"
         "\n« Wordle [W] »\n"
@@ -37,20 +37,21 @@ def MainMenuButtons():
     )
     time.sleep(1)
 
+    #SECT –––––– PRINT INSTRUCTIONS ––––––
     print("\nSelect any of the options above by inputting the keybind in the square brackets."
           "\ne.g. for « Wordle [W] », input 'W'\n")
 
 PreviousGuesses = [" -  -  -  -  - \n"] * 6
 
-# Outputs the colouring of the letter based on it's correctness
 def WordleUI(guess, states, attempt):
+    #SECT –––––– CREATE SAVE FOR GUESSES ––––––
     global PreviousGuesses
-    if attempt == 1:
+    if attempt == 1: #BRIEF - Ensures that the previous guesses are reset every round
         PreviousGuesses = [" -  -  -  -  - \n"] * 6
 
-    CurrentWord = []
+    CurrentWord = [] #BRIEF - Stores each coloured letter
 
-    # Gives each letter a unique colour based on their state
+    #SECT –––––– ALLOCATE APPROPRIATE LETTER COLOUR ––––––
     for i, letter in enumerate(guess):
         if states[i] == "green":
             CurrentWord.append(f"{GreenBackground} {letter} {ResetColour}")
@@ -61,7 +62,8 @@ def WordleUI(guess, states, attempt):
         else:
             CurrentWord.append(f"{GreyBackground} {letter} {ResetColour}")
 
-    PreviousGuesses[attempt - 1] = f'{"".join(CurrentWord)}\n'
+    #SECT –––––– PRINT GUESSES ––––––
+    PreviousGuesses[attempt - 1] = f'{"".join(CurrentWord)}\n' #BRIEF - Saves the coloured word to be visible every following round
     print("".join(PreviousGuesses))
     time.sleep(0.5)
 
@@ -79,9 +81,26 @@ def ConnectionsUI(gameStats, use):
             GuessedGroups.append(group)
 
     #SECT –––––– KEY PRINTS ––––––
+    """
+    *This section is definitely the most unreadable bit but below is a demonstration of how it'll look.
+    *For GuessedGroups:
+    eg. MEMBER OF A CLASSIC BACKING BAND    -> Pretend this is highlighted the difficulty colour (101-111)
+    eg. BANSHEE             HEARTBREAKER       
+    eg. PIP                 WAILER   
+    
+    *For the remaining groups: (Pretend not in order)
+    eg. HEART               KIDNEY              LIVER               LUNG               
+    eg. AERIAL              ARABESQUE           ROUNDOFF            SPLIT              
+    eg. CLOVER              HORSESHOE           MOON                RAINBOW  
+    
+    *Because python is weird, especially when it comes to ANSI colours, "".join() needs to be used.
+    *The "RemainingWords[i], ' ' * (19 - len(RemainingWords[i]))" basically just makes sure that it will always be 19 characters long.
+    *It takes the word, and adds (19 - number of letters of the word) spaces to the end.
+    *It makes everything neat and organised, also making it somewhat recognisable to the original.
+    """
     for group in GuessedGroups: #BRIEF - GuessedGroups will display the name of the group and its words underneath
         #SUBSECT –––––– DETERMINE BACKGROUND COLOUR ––––––
-        match group["Difficulty"]: #BRIEF - Checks if group["Difficulty"] matches with any case below
+        match group["Difficulty"]: #BRIEF - More efficient if statement for == operations
             case "P":
                 Background = PurpleBackground
             case "B":

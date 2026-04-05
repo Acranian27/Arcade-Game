@@ -3,26 +3,26 @@
 Host the main logic of the program.
 
 # To Do:
-- Call UI to display options
-- Retrieve a user input
-- Compare the user input to different modules keybind
-- Call the module that matches the user input
-- Run forever unless the user inputs as such
+- Call UI to display options -> COMPLETE
+- Retrieve a user input -> COMPLETE
+- Compare the user input to different modules keybind -> COMPLETE
+- Call the module that matches the user input -> PARTIALLY COMPLETE
+- Run forever unless the user inputs as such -> COMPLETE
 
 """
 import time
 
-from InputValidatorModule import UserInput # Call a function to retrieve a valid user input
-from UIModule import MainMenuButtons # Call a function to output the main menu options
+from InputValidatorModule import UserInput
+from UIModule import MainMenuButtons
 from WordleModule import WordleMain
 from ConnectionsModule import ConnectionsMain
 
 def Main():
     while True:
-        MainMenuButtons()
+        MainMenuButtons() #BRIEF - Shows the available options to the user
         Choice = UserInput("MainMenu", "WCHSQ")
 
-        # Those with "pass" will have modules called  once the modules are created
+        #SECT –––––– CHOOSE MODULE ––––––
         if Choice == "W":
             print("You've chosen Wordle, lets begin!\n")
             WordleMain()
@@ -31,6 +31,7 @@ def Main():
         elif Choice == "C":
             print("You've chosen Connections, lets begin!\n")
             ConnectionsMain()
+            time.sleep(1.5)
 
         elif Choice == "H":
             print("You've chosen to ask for help.\n")

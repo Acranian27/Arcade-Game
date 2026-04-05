@@ -17,9 +17,9 @@ from UIModule import WordleUI
 #SECT –––––– GATHER POSSIBLE WORDLES ––––––
 with open("WordleData.txt", "r") as file:
 
-    UncleanList = file.read().split("|") # Every word is separated by | with spaces on both sides
+    UncleanList = file.read().split("|")
 
-    PossibleWordles = []
+    PossibleWordles = [] #BRIEF - The random word each round will be picked from this list
     for word in UncleanList:
         PossibleWordles.append(word.strip())
 
@@ -28,22 +28,20 @@ with open("WordleVerificationData.txt", "r") as file:
 
     VerificationListRaw = file.read().split(",")
 
-    ValidationList = []
+    ValidationList = [] #BRIEF - The user's input will be compared to the words stored in this list
     for word in VerificationListRaw:
         ValidationList.append(word.strip())
 
+def SelectRandomWord(): #BRIEF - Chooses a random word
 
-def SelectRandomWord(): #BRIEF - Retrieves a random word
-
-    index = random.randint(0, len(PossibleWordles) - 1) # Python starts at zero not one
+    index = random.randint(0, len(PossibleWordles) - 1)
 
     return PossibleWordles[index]
 
-# Adds a state for each letter in Guess inside a list
-def DetermineStates(answer, guess):
+def DetermineStates(answer, guess): #BRIEF - Determines if each letter is green, yellow or grey based on its correctness
     """
-    LetterFrequency is very much essential because it ensures that duplicate
-       letters are accurately accounted for.
+    *LetterFrequency is very much essential because it ensures that duplicate
+    *   letters are accurately accounted for.
 
     eg. Lets use the example of the answer: "spike" and the guess: "paper".
     eg. Both letter "p" in paper would receive a yellow state even though "p" only

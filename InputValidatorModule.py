@@ -5,7 +5,7 @@ This is meant to get a validate a user input so that it doesn't crash other modu
 # To Do:
 - Retrieve the destination of the input -> COMPLETE
 - Retrieve a user input -> COMPLETE
-- Compare the user input to a set of requirements -> COMPLETE FOR: MainMenu, Wordle
+- Compare the user input to a set of requirements -> COMPLETE FOR: MainMenu, Wordle, Connections
 - Return the input to the required module -> COMPLETE
 
 """
