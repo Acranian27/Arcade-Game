@@ -13,6 +13,11 @@ This is meant to host the Wordle game logic and processing necessary to run the 
 import random, time
 from InputValidatorModule import UserInput
 from UIModule import WordleUI
+from ScoreModule import ScoreFunc
+
+#SECT –––––– COLOURS ––––––
+YellowRegular = "\033[0;33m"
+ResetColour = "\033[0m"
 
 #SECT –––––– GATHER POSSIBLE WORDLES ––––––
 with open("WordleData.txt", "r") as file:
@@ -52,7 +57,7 @@ def DetermineStates(answer, guess): #BRIEF - Determines if each letter is green,
 
     #SECT –––––– KEY VALUES ––––––
     LetterFrequency = {} #BRIEF - Stores the frequencies of each letter in the answer (eg. "a":1, "p":2, "l":1, "e":1)
-    LetterStates = ["","","","","",""]
+    LetterStates = [""] * 6
 
     #SECT –––––– RECORD LETTER APPEARANCES (ANSWER) ––––––
     for letter in answer:
@@ -81,29 +86,57 @@ def DetermineStates(answer, guess): #BRIEF - Determines if each letter is green,
 def WordleMain():
     #SECT –––––– KEY VARIABLES ––––––
     RandomWord = SelectRandomWord()
+
     Attempts = 0
     Correct = False
 
-    print("RandomWord:", RandomWord)  # DEBUG
-    print("To begin, enter a 5 letter word to guess the random word.")
+    StartTime = time.time()
+    Score = 0
+    Highscore = 0
+
+    print("To begin, enter a 5 letter word to guess the random word, or type 'H' for help.")
 
     #SECT –––––– GAME LOOP ––––––
     while True:
         #SUBSECT –––––– CHECK GUESS ––––––
         time.sleep(1)
         Guess = UserInput("Wordle", ValidationList)
-        States = DetermineStates(RandomWord, Guess)
 
-        #SUBSECT –––––– UI IMPORTING ––––––
-        Attempts += 1
-        WordleUI(Guess, States, Attempts)
-
-        #SUBSECT –––––– END-GAME CONDITIONS ––––––
-        if Guess == RandomWord or Attempts == 6:
+        if Guess == "Q": #BRIEF - Q == Quit
+            print("It seems you want to quit the game early, lets head back then.")
             break
+
+        elif Guess != "H": #BRIEF - If they aren't asking for help, play the game
+            States = DetermineStates(RandomWord, Guess)
+
+            #SUBSECT –––––– UI IMPORTING ––––––
+            Attempts += 1
+            WordleUI(Guess, States, Attempts)
+
+            #SUBSECT –––––– END-GAME CONDITIONS ––––––
+            if Guess == RandomWord or Attempts == 6:
+                TotalTime = time.time() - StartTime
+                Score, Highscore = ScoreFunc(TotalTime, Attempts, "Wordle")
+                break
+
+        else: #BRIEF - Provide assistance if they dunno how to play
+            print("".join(f"\n{YellowRegular}I can see you need some help.\n"))
+            time.sleep(2)
+            print("Wordle is a fun game where you guess a hidden 5-letter word.\n"
+                  "You have 6 guess to find the hidden word before you lose.\n"
+                  "Each round you guess a word and each letter is highlighted a different colour.\n")
+            time.sleep(4)
+            print("Green highlight means that the letter is correct and in the right position in the word.\n"
+                  "Yellow highlight means that the letter is correct but in the wrong position in the word.\n"
+                  "Finally, grey highlight means the letter is not present in the word at all.\n")
+            time.sleep(4)
+            print(f"Now that you know how to play Wordle, good luck guessing!{ResetColour}\n")
 
     #SECT –––––– FINAL OUTPUTS ––––––
     if Guess == RandomWord:
         print("Congratulations! You guessed the word correctly!\n")
     else:
         print(f"Tough luck, the word was {RandomWord}\n")
+
+    print("Your highscore is:", Highscore)
+    print("Your final score is:", Score)

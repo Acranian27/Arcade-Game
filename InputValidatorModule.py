@@ -16,8 +16,9 @@ def UserInput(destination, approvedInputs):
         #SUBSECT –––––– KEY VARIABLES ––––––
         ValidFormat = True
         Input = input("Input: ").upper() #BRIEF - All comparisons done in uppercase
-        print("Approved Inputs:", approvedInputs) #DEBUG
-        print(Input)
+
+        if Input == "H" or Input == "Q":
+            return Input
 
         #SUBSECT –––––– MAIN MENU VALIDATION ––––––
         if destination == "MainMenu":

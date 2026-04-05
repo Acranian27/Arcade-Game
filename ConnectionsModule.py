@@ -14,6 +14,11 @@ This is meant to host the Connections game logic and processing necessary to run
 import random, time
 from InputValidatorModule import UserInput
 from UIModule import ConnectionsUI
+from ScoreModule import ScoreFunc
+
+#SECT –––––– COLOURS ––––––
+YellowRegular = "\033[0;33m"
+ResetColour = "\033[0m"
 
 with open("ConnectionsData.txt", "r") as file: #BRIEF - Accesses file of connections groups and words
     #SECT –––––– DEFINITIONS ––––––
@@ -89,9 +94,10 @@ def ConnectionsMain():
     #SECT –––––– OTHER KEY VALUES ––––––
     Attempts = 1
     LivesLost = 0
+    StartTime = time.time()
 
 
-    print("To begin, enter 4 words/phrases separated by commas.")
+    print("To begin, enter 4 words/phrases separated by commas, or type 'H' for help.")
     time.sleep(1.5)
 
     #SECT –––––– GAME LOOP ––––––
@@ -109,22 +115,42 @@ def ConnectionsMain():
         #SUBSECT –––––– CHECK GUESS ––––––
         Guess = UserInput("Connections", RemainingWords(GROUPS))
 
-        CheckGuess(GROUPS, Guess) #BRIEF - Change the "Guessed" value of a group to True if correctly guessed
-
-        #SUBSECT –––––– UPDATE END-GAME VARIABLES ––––––
-        Correct = 0
-        for group in GROUPS: #BRIEF - Calculates the number of correctly guess groups
-            if group["Guessed"]:
-                Correct += 1
-
-        CorrectGuesses = Correct
-
-        Attempts += 1
-        LivesLost = Attempts - CorrectGuesses
-
-        #SUBSECT –––––– END-GAME CONDITIONS ––––––
-        if CorrectGuesses == 4 or LivesLost == MAX_LIVES: #BRIEF - No groups left to guess or all lives have been used.
+        if Guess == "Q": #BRIEF - Q == Quit
+            print("It seems you want to quit early, lets head back then.")
             break
+
+        elif Guess != "H": #BRIEF - If they aren't asking for help, play the game
+            CheckGuess(GROUPS, Guess) #BRIEF - Change the "Guessed" value of a group to True if correctly guessed
+
+            #SUBSECT –––––– UPDATE END-GAME VARIABLES ––––––
+            Correct = 0
+            for group in GROUPS: #BRIEF - Calculates the number of correctly guess groups
+                if group["Guessed"]:
+                    Correct += 1
+
+            CorrectGuesses = Correct
+
+            LivesLost = Attempts - CorrectGuesses
+            Attempts += 1
+
+            #SUBSECT –––––– END-GAME CONDITIONS ––––––
+            if CorrectGuesses == 4 or LivesLost == MAX_LIVES: #BRIEF - No groups left to guess or all lives have been used.
+                TotalTime = time.time() - StartTime
+                Score, Highscore = ScoreFunc(TotalTime, LivesLost, "Connections")
+                break
+
+        else:
+            print(f"\n{YellowRegular}It seems that you want some help.")
+            print("Connections is a fairly simple game once you understand the rules.\n")
+            time.sleep(2)
+            print("You are presented with 16 words, and there are 4 hidden groups.\n"
+                  "You do not know what these groups are, but you have to guess 4 words in the same group.\n"
+                  "Once you do this, the group name will be revealed.\n")
+            time.sleep(4)
+            print("This is then repeated for the next 3 groups until either you guessed them all or ran out of lives.\n"
+                  "That's right, you get 3 incorrect guesses, and any more means you lose.\n")
+            time.sleep(4)
+            print(f"Now that you know how to play Connections, lets get guessing!{ResetColour}\n")
 
     #SECT –––––– SHOW FINAL STATS ––––––
     if CorrectGuesses == 4:
@@ -143,3 +169,6 @@ def ConnectionsMain():
     }
 
     ConnectionsUI(GameStats, 'END')
+
+    print("Your highscore is:", Highscore)
+    print("Your final score is:", Score)

@@ -22,6 +22,7 @@ BoldWhite = "\033[1;38m"
 
 def MainMenuButtons():
     #SECT –––––– PRINT BUTTONS ––––––
+    time.sleep(1)
     print(
         "- - - - - - - - - - - - -"
         "\n« Wordle [W] »\n"
@@ -98,6 +99,7 @@ def ConnectionsUI(gameStats, use):
     *It takes the word, and adds (19 - number of letters of the word) spaces to the end.
     *It makes everything neat and organised, also making it somewhat recognisable to the original.
     """
+    print("")
     for group in GuessedGroups: #BRIEF - GuessedGroups will display the name of the group and its words underneath
         #SUBSECT –––––– DETERMINE BACKGROUND COLOUR ––––––
         match group["Difficulty"]: #BRIEF - More efficient if statement for == operations
@@ -119,6 +121,8 @@ def ConnectionsUI(gameStats, use):
         time.sleep(1)
 
     #SUBSECT –––––– PRINT UNGUESSED WORDS ––––––
+    random.shuffle(RemainingWords)
+    print("")
     for i in range(0, len(RemainingWords), 4):
         print(''.join((RemainingWords[i], ' ' * (19 - len(RemainingWords[i])))), ''.join((RemainingWords[i+1], ' ' * (19 - len(RemainingWords[i+1])))), ''.join((RemainingWords[i+2], ' ' * (19 - len(RemainingWords[i+2])))), ''.join((RemainingWords[i+3], ' ' * (19 - len(RemainingWords[i+3])))))
         #BRIEF - It will be the word followed by the amount of characters left from 19-len(word) as spaces (keeps each column in-line and consistent)
