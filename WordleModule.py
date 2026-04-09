@@ -7,7 +7,7 @@ This is meant to host the Wordle game logic and processing necessary to run the 
 - Retrieve a user input -> COMPLETE
 - Compare the user input to the random word -> COMPLETE
 - Run this module until the user guesses correctly or after 6 incorrect attempts -> COMPLETE
-- Get a score based on this
+- Get a score based on this -> COMPLETE
 
 """
 import random, time

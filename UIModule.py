@@ -6,7 +6,6 @@ This is meant to host the UI for the program.
 - Output the buttons for the main menu -> COMPLETE
 - Output the UI for Wordle -> COMPLETE
 - Output the UI for Connections -> COMPLETE
-- Output the information for 'Help Menu' and 'Show Scores'
 
 """
 import time, random
@@ -94,10 +93,9 @@ def ConnectionsUI(gameStats, use):
     eg. AERIAL              ARABESQUE           ROUNDOFF            SPLIT              
     eg. CLOVER              HORSESHOE           MOON                RAINBOW  
     
-    *Because python is weird, especially when it comes to ANSI colours, "".join() needs to be used.
-    *The "RemainingWords[i], ' ' * (19 - len(RemainingWords[i]))" basically just makes sure that it will always be 19 characters long.
-    *It takes the word, and adds (19 - number of letters of the word) spaces to the end.
     *It makes everything neat and organised, also making it somewhat recognisable to the original.
+    *The ":<20" basically just ensures that if the word/phrase is less than 20 characters,
+    *it'll fill the rest of the line with empty spaces to keep everything consistent
     """
     print("")
     for group in GuessedGroups: #BRIEF - GuessedGroups will display the name of the group and its words underneath
@@ -115,17 +113,16 @@ def ConnectionsUI(gameStats, use):
                 Background = ""
 
         #SUBSECT –––––– PRINT GUESSED GROUPS ––––––
-        print(f"{Background}{BoldWhite}{''.join((group['Name'],  ' ' * (39 - len(group['Name']))))}{ResetColour}")
-        print(f"{''.join((group['WordsWithin'][0], ' ' * (19 - len(group['WordsWithin'][0]))))} {''.join((group['WordsWithin'][1], ' ' * (19 - len(group['WordsWithin'][1]))))}\n"
-              f"{''.join((group['WordsWithin'][2], ' ' * (19 - len(group['WordsWithin'][2]))))} {''.join((group['WordsWithin'][3], ' ' * (19 - len(group['WordsWithin'][3]))))}\n")
+        print(f"{Background}{BoldWhite}{group['Name']:<40}{ResetColour}")
+        print(f"{group['WordsWithin'][0]:<20}{group['WordsWithin'][1]:<20}")
+        print(f"{group['WordsWithin'][2]:<20}{group['WordsWithin'][3]:<20}\n")
         time.sleep(1)
 
     #SUBSECT –––––– PRINT UNGUESSED WORDS ––––––
     random.shuffle(RemainingWords)
-    print("")
     for i in range(0, len(RemainingWords), 4):
-        print(''.join((RemainingWords[i], ' ' * (19 - len(RemainingWords[i])))), ''.join((RemainingWords[i+1], ' ' * (19 - len(RemainingWords[i+1])))), ''.join((RemainingWords[i+2], ' ' * (19 - len(RemainingWords[i+2])))), ''.join((RemainingWords[i+3], ' ' * (19 - len(RemainingWords[i+3])))))
-        #BRIEF - It will be the word followed by the amount of characters left from 19-len(word) as spaces (keeps each column in-line and consistent)
+        print(f"{RemainingWords[i]:<20}{RemainingWords[i+1]:<20}{RemainingWords[i+2]:<20}{RemainingWords[i+3]:<20}")
+        #BRIEF - It will be the word followed by the amount of characters left from 20-len(word) as spaces (keeps each column in-line and consistent)
 
     #SUBSECT –––––– PRINT EXTRA ROUND INFO ––––––
     if use != "END": #BRIEF - On the after the last guess, this doesn't need to be shown, just the connections board

@@ -7,8 +7,7 @@ This is meant to host the Connections game logic and processing necessary to run
 - Retrieve a user input -> Complete
 - Compare the user input to the random words -> Complete
 - Run this module until the user guesses all 4 groups or after 4 incorrect attempts -> Complete
-- Get a score based on this
-- Return to the main module
+- Get a score based on this -> COMPLETE
 
 """
 import random, time

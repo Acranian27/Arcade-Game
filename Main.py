@@ -6,7 +6,7 @@ Host the main logic of the program.
 - Call UI to display options -> COMPLETE
 - Retrieve a user input -> COMPLETE
 - Compare the user input to different modules keybind -> COMPLETE
-- Call the module that matches the user input -> PARTIALLY COMPLETE
+- Call the module that matches the user input -> COMPLETE
 - Run forever unless the user inputs as such -> COMPLETE
 
 """

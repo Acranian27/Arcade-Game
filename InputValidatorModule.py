@@ -17,7 +17,7 @@ def UserInput(destination, approvedInputs):
         ValidFormat = True
         Input = input("Input: ").upper() #BRIEF - All comparisons done in uppercase
 
-        if Input == "H" or Input == "Q":
+        if Input == "H" or Input == "Q": #BRIEF - No matter the program, these two inputs are always accepted
             return Input
 
         #SUBSECT –––––– MAIN MENU VALIDATION ––––––

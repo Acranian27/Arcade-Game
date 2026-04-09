@@ -3,9 +3,9 @@
 Take game data and convert it into a score for the user.
 
 # To Do:
-- Retrieve user data
-- Apply a formula to generate a score
-- Store highscores
+- Retrieve user data -> COMPLETE
+- Apply a formula to generate a score -> COMPLETE
+- Store highscores -> COMPLETE
 
 """
 import math
