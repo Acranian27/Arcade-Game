@@ -13,7 +13,7 @@ This is meant to host the Wordle game logic and processing necessary to run the 
 import random, time
 from InputValidatorModule import UserInput
 from UIModule import WordleUI
-from ScoreModule import ScoreFunc
+from ScoreModule import ScoreFunc, GetWordleHighscore
 
 #SECT –––––– COLOURS ––––––
 YellowRegular = "\033[0;33m"
@@ -22,28 +22,41 @@ ResetColour = "\033[0m"
 #SECT –––––– GATHER POSSIBLE WORDLES ––––––
 with open("WordleData.txt", "r") as file:
 
-    UncleanList = file.read().split("|")
+    PossibleWordlesRaw: list = file.read().split("|")
 
-    PossibleWordles = [] #BRIEF - The random word each round will be picked from this list
-    for word in UncleanList:
+    PossibleWordles: list = [] #BRIEF - The random word each round will be picked from this list
+    for word in PossibleWordlesRaw:
         PossibleWordles.append(word.strip())
 
 #SECT –––––– GATHER VALID INPUTS ––––––
 with open("WordleVerificationData.txt", "r") as file:
 
-    VerificationListRaw = file.read().split(",")
+    VerificationWordsRaw: list = file.read().split(",")
 
-    ValidationList = [] #BRIEF - The user's input will be compared to the words stored in this list
-    for word in VerificationListRaw:
-        ValidationList.append(word.strip())
+    ValidationWords: list = [] #BRIEF - The user's input will be compared to the words stored in this list
+    for word in VerificationWordsRaw:
+        ValidationWords.append(word.strip())
 
-def SelectRandomWord(): #BRIEF - Chooses a random word
+def HelpMenu() -> None:
+    print("".join(f"\n{YellowRegular}I can see you need some help.\n"))
+    time.sleep(2)
+    print("Wordle is a fun game where you guess a hidden 5-letter word.\n"
+          "You have 6 guess to find the hidden word before you lose.\n"
+          "Each round you guess a word and each letter is highlighted a different colour.\n")
+    time.sleep(4)
+    print("Green highlight means that the letter is correct and in the right position in the word.\n"
+          "Yellow highlight means that the letter is correct but in the wrong position in the word.\n"
+          "Finally, grey highlight means the letter is not present in the word at all.\n")
+    time.sleep(4)
+    print(f"Now that you know how to play Wordle, good luck guessing!{ResetColour}\n")
 
-    index = random.randint(0, len(PossibleWordles) - 1)
+def SelectRandomWord() -> str: #BRIEF - Chooses a random word
+
+    index: int = random.randint(0, len(PossibleWordles) - 1)
 
     return PossibleWordles[index]
 
-def DetermineStates(answer, guess): #BRIEF - Determines if each letter is green, yellow or grey based on its correctness
+def DetermineStates(answer: str, guess: str) -> list: #BRIEF - Determines if each letter is green, yellow or grey based on its correctness
     """
     *LetterFrequency is very much essential because it ensures that duplicate
     *   letters are accurately accounted for.
@@ -56,8 +69,8 @@ def DetermineStates(answer, guess): #BRIEF - Determines if each letter is green,
     """
 
     #SECT –––––– KEY VALUES ––––––
-    LetterFrequency = {} #BRIEF - Stores the frequencies of each letter in the answer (eg. "a":1, "p":2, "l":1, "e":1)
-    LetterStates = [""] * 6
+    LetterFrequency: dict = {} #BRIEF - Stores the frequencies of each letter in the answer (eg. "a":1, "p":2, "l":1, "e":1)
+    LetterStates: list = [""] * 6
 
     #SECT –––––– RECORD LETTER APPEARANCES (ANSWER) ––––––
     for letter in answer:
@@ -78,21 +91,20 @@ def DetermineStates(answer, guess): #BRIEF - Determines if each letter is green,
             LetterStates[pos] = ("yellow") #BRIEF - Same letter but incorrect position in the answer
             LetterFrequency[letter] -= 1
 
-        elif LetterStates[pos] == "":#BRIEF - Make sure that it doesn't erase the "green" state
+        elif LetterStates[pos] == "": #BRIEF - Make sure that it doesn't erase the "green" state
             LetterStates[pos] = ("grey") #BRIEF - Not in the word at all
 
     return LetterStates
 
-def WordleMain():
+def WordleMain() -> None:
     #SECT –––––– KEY VARIABLES ––––––
-    RandomWord = SelectRandomWord()
+    RandomWord: str = SelectRandomWord()
 
     Attempts = 0
     Correct = False
 
-    StartTime = time.time()
+    StartTime: float = time.time()
     Score = 0
-    Highscore = 0
 
     print("To begin, enter a 5 letter word to guess the random word, or type 'H' for help.")
 
@@ -100,43 +112,37 @@ def WordleMain():
     while True:
         #SUBSECT –––––– CHECK GUESS ––––––
         time.sleep(1)
-        Guess = UserInput("Wordle", ValidationList)
+        Guess: str = UserInput("Wordle", ValidationWords)
 
-        if Guess == "Q": #BRIEF - Q == Quit
+        if Guess == "Q": #BRIEF - Quit the module
             print("It seems you want to quit the game early, lets head back then.")
             break
 
-        elif Guess != "H": #BRIEF - If they aren't asking for help, play the game
-            States = DetermineStates(RandomWord, Guess)
+        elif Guess == "H": #BRIEF - Give helpful information
+            HelpMenu()
 
-            #SUBSECT –––––– UI IMPORTING ––––––
+        else:
+            States: list = DetermineStates(RandomWord, Guess)
+
+            # SUBSECT –––––– UI IMPORTING ––––––
             Attempts += 1
             WordleUI(Guess, States, Attempts)
 
-            #SUBSECT –––––– END-GAME CONDITIONS ––––––
+            # SUBSECT –––––– END-GAME CONDITIONS ––––––
             if Guess == RandomWord or Attempts == 6:
-                TotalTime = time.time() - StartTime
-                Score, Highscore = ScoreFunc(TotalTime, Attempts, "Wordle")
+                TotalTime: float = time.time() - StartTime
+                Score = ScoreFunc(TotalTime, Attempts, "Wordle", Guess == RandomWord)
                 break
 
-        else: #BRIEF - Provide assistance if they dunno how to play
-            print("".join(f"\n{YellowRegular}I can see you need some help.\n"))
-            time.sleep(2)
-            print("Wordle is a fun game where you guess a hidden 5-letter word.\n"
-                  "You have 6 guess to find the hidden word before you lose.\n"
-                  "Each round you guess a word and each letter is highlighted a different colour.\n")
-            time.sleep(4)
-            print("Green highlight means that the letter is correct and in the right position in the word.\n"
-                  "Yellow highlight means that the letter is correct but in the wrong position in the word.\n"
-                  "Finally, grey highlight means the letter is not present in the word at all.\n")
-            time.sleep(4)
-            print(f"Now that you know how to play Wordle, good luck guessing!{ResetColour}\n")
-
     #SECT –––––– FINAL OUTPUTS ––––––
+    time.sleep(1)
+
     if Guess == RandomWord:
         print("Congratulations! You guessed the word correctly!\n")
     else:
         print(f"Tough luck, the word was {RandomWord}\n")
 
-    print("Your highscore is:", Highscore)
+    time.sleep(1)
+
+    print("Your highscore is:", GetWordleHighscore())
     print("Your final score is:", Score)

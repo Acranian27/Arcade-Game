@@ -14,13 +14,17 @@ import math
 WordleHighscore = 0
 ConnectionsHighscore = 0
 
-def GetHighscores(): #BRIEF - Used in the main menu
+def GetWordleHighscore() -> int:
     global WordleHighscore
+
+    return WordleHighscore
+
+def GetConnectionsHighscore() -> int:
     global ConnectionsHighscore
 
-    return WordleHighscore, ConnectionsHighscore
+    return ConnectionsHighscore
 
-def AdjustHighscore(score, game): #BRIEF - Verify the highscore is the highest score
+def AdjustHighscore(score: int, game: str) -> None: #BRIEF - Verify the highscore is the highest score
     #SECT –––––– RETRIEVE CURRENT HIGHSCORES ––––––
     global WordleHighscore
     global ConnectionsHighscore
@@ -31,27 +35,23 @@ def AdjustHighscore(score, game): #BRIEF - Verify the highscore is the highest s
     elif game == "Connections" and ConnectionsHighscore < score: #BRIEF - ^^
         ConnectionsHighscore = score
 
-def CalculateScore(time, attempts, game): #BRIEF - Generate a fitting score
-    if game == "Wordle" and attempts != 6:
+def CalculateScore(time: float, attempts: int, game: str, win: bool) -> int: #BRIEF - Generate a fitting score
+    if game == "Wordle" and win:
         Score = round((10000 / math.sqrt(time * attempts)), 0)
 
-    elif game == "Connections" and attempts != 4:
-        Score = round((100000 / math.sqrt(time * attempts)), 0)
+    elif game == "Connections" and win:
+        Score = round((25000 / math.sqrt(time * attempts)), 0)
 
-    else: #BRIEF - If the user didn't failed the game they get 0
+    else: #BRIEF - If the user failed the game they get 0
         Score = 0
 
-    return Score
+    return int(Score)
 
-def ScoreFunc(time, attempts, game):
-    #SECT –––––– CALCULATE NEW SCORES ––––––
-    Score = CalculateScore(time, attempts, game)
+def ScoreFunc(time: float, attempts: int, game: str, win: bool) -> int:
+    #SECT –––––– CALCULATE NEW SCORE ––––––
+    Score = CalculateScore(time, attempts, game, win)
 
     AdjustHighscore(Score, game)
 
-    #SECT –––––– RETURN NEW SCORES ––––––
-    if game == "Wordle":
-        return Score, WordleHighscore
-
-    elif game == "Connections":
-        return Score, ConnectionsHighscore
+    #SECT –––––– RETURN NEW SCORE ––––––
+    return Score

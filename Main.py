@@ -16,16 +16,26 @@ from InputValidatorModule import UserInput
 from UIModule import MainMenuButtons
 from WordleModule import WordleMain
 from ConnectionsModule import ConnectionsMain
-from ScoreModule import GetHighscores
+from ScoreModule import GetConnectionsHighscore, GetWordleHighscore
 
 #SECT –––––– COLOURS ––––––
 YellowRegular = "\033[0;33m"
 ResetColour = "\033[0m"
 
-def Main():
+def HelpMenu() -> None:
+    print(f"{YellowRegular}Remember, if you need help at any point in this program, type 'H' in an input.\n"
+          "This will toggle the help menu and give you meaningful advice.\n")
+    time.sleep(3)
+    print("Or instead, input 'Q' to quit whatever module you are in, or to exit the program completely.\n")
+    time.sleep(2)
+    print("Once you enter inside a game, inputting 'H' will provide instructions and tips for that game.\n")
+    time.sleep(2)
+    print(f"Good luck and have fun!{ResetColour}\n")
+
+def Main() -> None:
     while True:
         MainMenuButtons() #BRIEF - Shows the available options to the user
-        Choice = UserInput("MainMenu", "WCHSQ")
+        Choice: str = UserInput("MainMenu", "WCHSQ")
 
         #SECT –––––– CHOOSE MODULE ––––––
         if Choice == "W":
@@ -39,30 +49,23 @@ def Main():
             time.sleep(1.5)
 
         elif Choice == "H":
-            print(f"{YellowRegular}You've chosen to ask for help.\n")
-            print("Remember, if you need help at any point in this program, type 'H' in an input.\n"
-                  "This will toggle the help menu and give you meaningful advice.\n")
-            time.sleep(3)
-            print("Or instead, input 'Q' to quit whatever module you are in, or to exit the program completely.\n")
-            time.sleep(2)
-            print("Once you enter inside a game, inputting 'H' will provide instructions and tips for that game.\n")
-            time.sleep(2)
-            print(f"Good luck and have fun!{ResetColour}\n")
+            print(f"You've chosen to ask for help.\n")
+            HelpMenu()
+            time.sleep(1.5)
 
         elif Choice == "S":
             print("You've chosen to view your scores.\n")
             time.sleep(0.5)
 
-            Wordle, Connections = GetHighscores()
-
-            print("Your Wordle highscore is:", Wordle)
+            print("Your Wordle highscore is:", GetWordleHighscore())
             time.sleep(0.5)
 
-            print("Your Connections highscore is:", Connections)
+            print("Your Connections highscore is:", GetConnectionsHighscore())
             time.sleep(0.5)
 
         elif Choice == "Q":
             print("You've chosen to quit, hope you had fun!\nBye for now...")
+            time.sleep(0.5)
             break
 
 Main()
