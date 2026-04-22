@@ -15,7 +15,7 @@ def UserInput(destination, approvedInputs):
     while True:
         #SUBSECT –––––– KEY VARIABLES ––––––
         ValidFormat = True
-        Input = input("Input: ").upper() #BRIEF - All comparisons done in uppercase
+        Input = input("Input: ").upper().strip() #BRIEF - All comparisons done in uppercase
 
         if Input == "H" or Input == "Q": #BRIEF - No matter the program, these two inputs are always accepted
             return Input
