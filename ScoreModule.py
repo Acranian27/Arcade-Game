@@ -14,6 +14,7 @@ import math
 WordleHighscore = 0
 ConnectionsHighscore = 0
 
+#SECT –––––– HIGHSCORE RETRIEVAL FOR OTHER MODULES ––––––
 def GetWordleHighscore() -> int:
     global WordleHighscore
 
@@ -24,15 +25,15 @@ def GetConnectionsHighscore() -> int:
 
     return ConnectionsHighscore
 
-def AdjustHighscore(score: int, game: str) -> None: #BRIEF - Verify the highscore is the highest score
+def AdjustHighscore(score: int, game: str) -> None:
     #SECT –––––– RETRIEVE CURRENT HIGHSCORES ––––––
     global WordleHighscore
     global ConnectionsHighscore
 
     #SECT –––––– UPDATE APPROPRIATE SCORES ––––––
-    if game == "Wordle" and WordleHighscore < score: #BRIEF - Ensures that only the targetted game's highscore is updated
+    if game == "Wordle" and WordleHighscore < score:
         WordleHighscore = score
-    elif game == "Connections" and ConnectionsHighscore < score: #BRIEF - ^^
+    elif game == "Connections" and ConnectionsHighscore < score:
         ConnectionsHighscore = score
 
 def CalculateScore(time: float, attempts: int, game: str, win: bool) -> int: #BRIEF - Generate a fitting score

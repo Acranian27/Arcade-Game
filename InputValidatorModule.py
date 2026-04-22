@@ -65,7 +65,6 @@ def UserInput(destination: str, approvedInputs: list) -> str or list: #BRIEF - I
         #SUBSECT –––––– KEY VARIABLES ––––––
         ValidFormat = True
         Input = input("Input: ").upper().strip() #BRIEF - All comparisons done in uppercase
-        print(approvedInputs)
 
         #SUBSECT –––––– VALIDATE BASED ON DESTINATION ––––––
         if Input == "H" or Input == "Q": #BRIEF - No matter the program, these two inputs are always accepted

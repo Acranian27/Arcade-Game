@@ -16,8 +16,8 @@ from UIModule import ConnectionsUI
 from ScoreModule import ScoreFunc, GetConnectionsHighscore
 
 #SECT –––––– COLOURS ––––––
-YellowRegular = "\033[0;33m"
-ResetColour = "\033[0m"
+YELLOW_REGULAR = "\033[0;33m"
+RESET_COLOUR = "\033[0m"
 
 with open("ConnectionsData.txt", "r") as file: #BRIEF - Accesses file of connections groups and words
     #SECT –––––– DEFINITIONS ––––––
@@ -46,7 +46,7 @@ with open("ConnectionsData.txt", "r") as file: #BRIEF - Accesses file of connect
         GroupsList.append(ThisGroup)
 
 def HelpMenu() -> None:
-    print(f"\n\n{YellowRegular}It seems that you want some help.")
+    print(f"\n\n{YELLOW_REGULAR}It seems that you want some help.")
     print("Connections is a fairly simple game once you understand the rules.\n")
     time.sleep(2)
     print("You are presented with 16 words, and there are 4 hidden groups.\n"
@@ -56,7 +56,7 @@ def HelpMenu() -> None:
     print("This is then repeated for the next 3 groups until either you guessed them all or ran out of lives.\n"
           "That's right, you get 3 incorrect guesses, and any more means you lose.\n")
     time.sleep(4)
-    print(f"Now that you know how to play Connections, lets get guessing!{ResetColour}")
+    print(f"Now that you know how to play Connections, lets get guessing!{RESET_COLOUR}")
 
 def ChoseGroups() -> list: #BRIEF - Chose 4 groups when the round begins
     #SECT –––––– KEY VALUES ––––––
@@ -71,7 +71,7 @@ def ChoseGroups() -> list: #BRIEF - Chose 4 groups when the round begins
         if Diff not in ChosenDifficulties: #BRIEF - Prevents the same difficulty appearing twice (also prevents the same group from being chosen twice)
             ChosenDifficulties.append(Diff)
 
-            GroupsList[ID]["Guessed"] = False
+            GroupsList[ID]["Guessed"] = False #BRIEF - Ensures that the group's "Guessed" data is set correctly
             ChosenGroups.append(GroupsList[ID])
 
 
@@ -122,7 +122,7 @@ def ConnectionsMain() -> None:
     #SECT –––––– GAME LOOP ––––––
     while True:
         #SUBSECT –––––– UI IMPORTING ––––––
-        GameStats = {  # BRIEF - Used to import data to the UI module
+        GameStats = {  # BRIEF - Used to export data to the UI module
             "LivesRemaining": MAX_LIVES - LivesLost,
             "Attempt": Attempts,
             "Groups": GROUPS
@@ -141,7 +141,7 @@ def ConnectionsMain() -> None:
         elif Guess == "H": #BRIEF - Give helpful information
             HelpMenu()
 
-        else:
+        else: #BRIEF - Run the actual game
             CheckGuess(GROUPS, Guess)  # BRIEF - Change the "Guessed" value of a group to True if correctly guessed
 
             # SUBSECT –––––– UPDATE END-GAME VARIABLES ––––––
@@ -168,11 +168,11 @@ def ConnectionsMain() -> None:
     else:
         print("\nUnlucky, these were the 4 groups:")
 
-    for group in GROUPS: #BRIEF - Make sure that all groups will be visible
+    for group in GROUPS: #BRIEF - Ensure all groups will be visible when the UI module is called
         if not group["Guessed"]:
             group["Guessed"] = True
 
-    GameStats = {  # BRIEF - Used to import data to the UI module
+    GameStats = {  # BRIEF - Used to export data to the UI module
         "LivesRemaining": MAX_LIVES - LivesLost,
         "Attempt": Attempts,
         "Groups": GROUPS

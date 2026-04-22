@@ -16,8 +16,8 @@ from UIModule import WordleUI
 from ScoreModule import ScoreFunc, GetWordleHighscore
 
 #SECT –––––– COLOURS ––––––
-YellowRegular = "\033[0;33m"
-ResetColour = "\033[0m"
+YELLOW_REGULAR = "\033[0;33m"
+RESET_COLOUR = "\033[0m"
 
 #SECT –––––– GATHER POSSIBLE WORDLES ––––––
 with open("WordleData.txt", "r") as file:
@@ -30,7 +30,7 @@ with open("WordleData.txt", "r") as file:
 
 
 def HelpMenu() -> None:
-    print("".join(f"\n{YellowRegular}I can see you need some help.\n"))
+    print("".join(f"\n{YELLOW_REGULAR}I can see you need some help.\n"))
     time.sleep(2)
     print("Wordle is a fun game where you guess a hidden 5-letter word.\n"
           "You have 6 guess to find the hidden word before you lose.\n"
@@ -40,7 +40,7 @@ def HelpMenu() -> None:
           "Yellow highlight means that the letter is correct but in the wrong position in the word.\n"
           "Finally, grey highlight means the letter is not present in the word at all.\n")
     time.sleep(4)
-    print(f"Now that you know how to play Wordle, good luck guessing!{ResetColour}\n")
+    print(f"Now that you know how to play Wordle, good luck guessing!{RESET_COLOUR}\n")
 
 def SelectRandomWord() -> str: #BRIEF - Chooses a random word
 
@@ -70,20 +70,19 @@ def DetermineStates(answer: str, guess: str) -> list: #BRIEF - Determines if eac
             LetterFrequency[letter] += 1
         else:
             LetterFrequency[letter] = 1
-    print("LetterFrequency:",LetterFrequency) #DEBUG
 
     #SECT –––––– DETERMINE LETTER STATES (GUESS) ––––––
-    for i in range(5): #BRIEF - Check for greens separately otherwise errors arise
+    for i in range(5): #BRIEF - Check for greens separately to prevent inconsistent colouring
         if guess[i] == answer[i]:
             LetterStates[i] = ("green") #BRIEF - Same letter and the same position in the answer
             LetterFrequency[guess[i]] -= 1
 
-    for pos, letter in enumerate(guess): #BRIEF - Check for yellows and greys
-        if letter in answer and LetterFrequency[letter] > 0 and LetterStates[pos] == "": #BRIEF - Make sure that it doesn't erase the "green" state
+    for pos, letter in enumerate(guess):
+        if letter in answer and LetterFrequency[letter] > 0 and LetterStates[pos] == "": #BRIEF - Ensure green tag is not overriden
             LetterStates[pos] = ("yellow") #BRIEF - Same letter but incorrect position in the answer
             LetterFrequency[letter] -= 1
 
-        elif LetterStates[pos] == "": #BRIEF - Make sure that it doesn't erase the "green" state
+        elif LetterStates[pos] == "":#BRIEF - Ensure green tag is not overriden
             LetterStates[pos] = ("grey") #BRIEF - Not in the word at all
 
     return LetterStates
@@ -113,7 +112,7 @@ def WordleMain() -> None:
         elif Guess == "H": #BRIEF - Give helpful information
             HelpMenu()
 
-        else:
+        else: #BRIEF - Run the actual game
             States: list = DetermineStates(RandomWord, Guess)
 
             # SUBSECT –––––– UI IMPORTING ––––––
@@ -121,7 +120,7 @@ def WordleMain() -> None:
             WordleUI(Guess, States, Attempts)
 
             # SUBSECT –––––– END-GAME CONDITIONS ––––––
-            if Guess == RandomWord or Attempts == 6:
+            if Guess == RandomWord or Attempts == 6: #BRIEF - Guessed the hidden word or ran out of attempts
                 TotalTime: float = time.time() - StartTime
                 Score = ScoreFunc(TotalTime, Attempts, "Wordle", Guess == RandomWord)
                 break

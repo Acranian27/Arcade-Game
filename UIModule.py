@@ -11,13 +11,14 @@ This is meant to host the UI for the program.
 import time, random
 
 #SECT –––––– KEY COLOURS ––––––
-ResetColour = "\033[0m"
-GreenBackground = "\033[42m\033[1;38m"
-YellowBackground = "\033[43m\033[1;38m"
-BlueBackground = "\033[44m\033[1;38m"
-PurpleBackground = "\033[45m\033[1;38m"
-GreyBackground = "\033[47m\033[1;38m"
-BoldWhite = "\033[1;38m"
+RESET_COLOUR = "\033[0m"
+GREEN_BACKGROUND = "\033[42m\033[1;38m"
+YELLOW_BACKGROUND = "\033[43m\033[1;38m"
+BLUE_BACKGROUND = "\033[44m\033[1;38m"
+PURPLE_BACKGROUND = "\033[45m\033[1;38m"
+GREY_BACKGROUND = "\033[47m\033[1;38m"
+BOLD_RED = "\033[1;31m"
+BOLD_WHITE = "\033[1;38m"
 
 def MainMenuButtons():
     #SECT –––––– PRINT BUTTONS ––––––
@@ -54,13 +55,13 @@ def WordleUI(guess, states, attempt):
     #SECT –––––– ALLOCATE APPROPRIATE LETTER COLOUR ––––––
     for i, letter in enumerate(guess):
         if states[i] == "green":
-            CurrentWord.append(f"{GreenBackground} {letter} {ResetColour}")
+            CurrentWord.append(f"{GREEN_BACKGROUND} {letter} {RESET_COLOUR}")
 
         elif states[i] == "yellow":
-            CurrentWord.append(f"{YellowBackground} {letter} {ResetColour}")
+            CurrentWord.append(f"{YELLOW_BACKGROUND} {letter} {RESET_COLOUR}")
 
         else:
-            CurrentWord.append(f"{GreyBackground} {letter} {ResetColour}")
+            CurrentWord.append(f"{GREY_BACKGROUND} {letter} {RESET_COLOUR}")
 
     #SECT –––––– PRINT GUESSES ––––––
     PreviousGuesses[attempt - 1] = f'{"".join(CurrentWord)}\n' #BRIEF - Saves the coloured word to be visible every following round
@@ -84,7 +85,7 @@ def ConnectionsUI(gameStats, use):
     """
     *This section is definitely the most unreadable bit but below is a demonstration of how it'll look.
     *For GuessedGroups:
-    eg. MEMBER OF A CLASSIC BACKING BAND    -> Pretend this is highlighted the difficulty colour (101-111)
+    eg. MEMBER OF A CLASSIC BACKING BAND    -> Pretend this is highlighted the difficulty colour
     eg. BANSHEE             HEARTBREAKER       
     eg. PIP                 WAILER   
     
@@ -102,18 +103,19 @@ def ConnectionsUI(gameStats, use):
         #SUBSECT –––––– DETERMINE BACKGROUND COLOUR ––––––
         match group["Difficulty"]: #BRIEF - More efficient if statement for == operations
             case "P":
-                Background = PurpleBackground
+                Background = PURPLE_BACKGROUND
             case "B":
-                Background = BlueBackground
+                Background = BLUE_BACKGROUND
             case "G":
-                Background = GreenBackground
+                Background = GREEN_BACKGROUND
             case "Y":
-                Background = YellowBackground
-            case _:
+                Background = YELLOW_BACKGROUND
+            case _: #BRIEF - Should be impossible but just in case someone meddles with text file data
                 Background = ""
+                print(f"{BOLD_RED}WARNING: group['Difficulty'] contained an invalid value.{RESET_COLOUR}")
 
         #SUBSECT –––––– PRINT GUESSED GROUPS ––––––
-        print(f"{Background}{BoldWhite}{group['Name']:<40}{ResetColour}")
+        print(f"{Background}{BOLD_WHITE}{group['Name']:<40}{RESET_COLOUR}")
         print(f"{group['WordsWithin'][0]:<20}{group['WordsWithin'][1]:<20}")
         print(f"{group['WordsWithin'][2]:<20}{group['WordsWithin'][3]:<20}\n")
         time.sleep(1)

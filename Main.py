@@ -19,18 +19,18 @@ from ConnectionsModule import ConnectionsMain
 from ScoreModule import GetConnectionsHighscore, GetWordleHighscore
 
 #SECT –––––– COLOURS ––––––
-YellowRegular = "\033[0;33m"
-ResetColour = "\033[0m"
+YELLOW_REGULAR = "\033[0;33m"
+RESET_COLOUR = "\033[0m"
 
 def HelpMenu() -> None:
-    print(f"{YellowRegular}Remember, if you need help at any point in this program, type 'H' in an input.\n"
+    print(f"{YELLOW_REGULAR}Remember, if you need help at any point in this program, type 'H' in an input.\n"
           "This will toggle the help menu and give you meaningful advice.\n")
     time.sleep(3)
     print("Or instead, input 'Q' to quit whatever module you are in, or to exit the program completely.\n")
     time.sleep(2)
     print("Once you enter inside a game, inputting 'H' will provide instructions and tips for that game.\n")
     time.sleep(2)
-    print(f"Good luck and have fun!{ResetColour}\n")
+    print(f"Good luck and have fun!{RESET_COLOUR}\n")
 
 def Main() -> None:
     while True:
