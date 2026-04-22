@@ -21,8 +21,8 @@ BoldWhite = "\033[1;38m"
 
 def MainMenuButtons():
     #SECT –––––– PRINT BUTTONS ––––––
-    time.sleep(1)
     print(
+        "\n"
         "- - - - - - - - - - - - -"
         "\n« Wordle [W] »\n"
         "- - - - - - - - - - - - -"
@@ -39,7 +39,7 @@ def MainMenuButtons():
 
     #SECT –––––– PRINT INSTRUCTIONS ––––––
     print("\nSelect any of the options above by inputting the keybind in the square brackets."
-          "\ne.g. for « Wordle [W] », input 'W'\n")
+          "\ne.g. for « Wordle [W] », input 'W'")
 
 PreviousGuesses = [" -  -  -  -  - \n"] * 6
 
@@ -64,7 +64,7 @@ def WordleUI(guess, states, attempt):
 
     #SECT –––––– PRINT GUESSES ––––––
     PreviousGuesses[attempt - 1] = f'{"".join(CurrentWord)}\n' #BRIEF - Saves the coloured word to be visible every following round
-    print("".join(PreviousGuesses))
+    print("\n" + "".join(PreviousGuesses))
     time.sleep(0.5)
 
 def ConnectionsUI(gameStats, use):

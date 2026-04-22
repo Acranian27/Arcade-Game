@@ -39,22 +39,22 @@ def Main() -> None:
 
         #SECT –––––– CHOOSE MODULE ––––––
         if Choice == "W":
-            print("You've chosen Wordle, lets begin!\n")
+            print("\nYou've chosen Wordle, lets get started!\n")
             WordleMain()
             time.sleep(1.5)
 
         elif Choice == "C":
-            print("You've chosen Connections, lets begin!\n")
+            print("\nYou've chosen Connections, lets get started!\n")
             ConnectionsMain()
             time.sleep(1.5)
 
         elif Choice == "H":
-            print(f"You've chosen to ask for help.\n")
+            print(f"\nYou've chosen to ask for help.\n")
             HelpMenu()
             time.sleep(1.5)
 
         elif Choice == "S":
-            print("You've chosen to view your scores.\n")
+            print("\nYou've chosen to view your scores.\n")
             time.sleep(0.5)
 
             print("Your Wordle highscore is:", GetWordleHighscore())

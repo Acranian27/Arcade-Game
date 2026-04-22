@@ -22,20 +22,12 @@ ResetColour = "\033[0m"
 #SECT –––––– GATHER POSSIBLE WORDLES ––––––
 with open("WordleData.txt", "r") as file:
 
-    PossibleWordlesRaw: list = file.read().split("|")
+    PossibleWordlesRaw: list = file.read().split(",")
 
     PossibleWordles: list = [] #BRIEF - The random word each round will be picked from this list
     for word in PossibleWordlesRaw:
         PossibleWordles.append(word.strip())
 
-#SECT –––––– GATHER VALID INPUTS ––––––
-with open("WordleVerificationData.txt", "r") as file:
-
-    VerificationWordsRaw: list = file.read().split(",")
-
-    ValidationWords: list = [] #BRIEF - The user's input will be compared to the words stored in this list
-    for word in VerificationWordsRaw:
-        ValidationWords.append(word.strip())
 
 def HelpMenu() -> None:
     print("".join(f"\n{YellowRegular}I can see you need some help.\n"))
@@ -112,7 +104,7 @@ def WordleMain() -> None:
     while True:
         #SUBSECT –––––– CHECK GUESS ––––––
         time.sleep(1)
-        Guess: str = UserInput("Wordle", ValidationWords)
+        Guess: str = UserInput("Wordle", PossibleWordles)
 
         if Guess == "Q": #BRIEF - Quit the module
             print("It seems you want to quit the game early, lets head back then.")
@@ -144,5 +136,5 @@ def WordleMain() -> None:
 
     time.sleep(1)
 
-    print("Your highscore is:", GetWordleHighscore())
     print("Your final score is:", Score)
+    print("Your highscore is:", GetWordleHighscore())

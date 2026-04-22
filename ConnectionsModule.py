@@ -180,5 +180,5 @@ def ConnectionsMain() -> None:
 
     ConnectionsUI(GameStats, 'END')
 
-    print("Your highscore is:", GetConnectionsHighscore())
     print("Your final score is:", Score)
+    print("Your highscore is:", GetConnectionsHighscore())
