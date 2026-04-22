@@ -71,7 +71,7 @@ def ChoseGroups() -> list: #BRIEF - Chose 4 groups when the round begins
         if Diff not in ChosenDifficulties: #BRIEF - Prevents the same difficulty appearing twice (also prevents the same group from being chosen twice)
             ChosenDifficulties.append(Diff)
 
-            GroupList[ID]["Guessed"] = False
+            GroupsList[ID]["Guessed"] = False
             ChosenGroups.append(GroupsList[ID])
 
 
